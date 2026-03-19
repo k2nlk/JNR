@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JNR Manager</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(180deg, #1a0033, #0d001a);
+    color: white;
+}
+
+.container {
+    padding: 20px;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #b366ff;
+}
+
+.card {
+    background: linear-gradient(135deg, #6a00ff, #a64dff);
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.big {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.small-card {
+    background: #1f003d;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #a64dff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+    color: white;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">JNR Manager</div>
+
+<div class="card">
+    <div>💰 Profit aujourd'hui</div>
+    <div class="big" id="today">0 €</div>
+</div>
+
+<div class="grid">
+    <div class="small-card">
+        <div>📦 Ventes totales</div>
+        <div id="totalSales">0</div>
+    </div>
+
+    <div class="small-card">
+        <div>💸 CA total</div>
+        <div id="totalMoney">0 €</div>
+    </div>
+</div>
+
+<div style="margin-top:30px;">
+    <h3>Ajouter une vente</h3>
+    <input type="number" id="price" placeholder="Prix €">
+    <button onclick="addSale()">+</button>
+</div>
+
+</div>
+
+<script>
+let sales = JSON.parse(localStorage.getItem("sales")) || [];
+
+function updateUI() {
+    let total = 0;
+    let todayTotal = 0;
+    let today = new Date().toDateString();
+
+    sales.forEach(s => {
+        total += s.price;
+        if (new Date(s.date).toDateString() === today) {
+            todayTotal += s.price;
+        }
+    });
+
+    document.getElementById("today").innerText = todayTotal + " €";
+    document.getElementById("totalMoney").innerText = total + " €";
+    document.getElementById("totalSales").innerText = sales.length;
+}
+
+function addSale() {
+    let price = parseFloat(document.getElementById("price").value);
+    if (!price) return;
+
+    sales.push({
+        price: price,
+        date: new Date()
+    });
+
+    localStorage.setItem("sales", JSON.stringify(sales));
+    document.getElementById("price").value = "";
+    updateUI();
+}
+
+updateUI();
+</script>
+
+</body>
+</html>
